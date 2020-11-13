@@ -15,7 +15,6 @@ def make_artist_list():
     return artist_source
 
 
-
 def select_artists(number_of_items):
     lines = open('./artistnames.txt').read().splitlines()
     artists = [random.choice(lines).strip() for name in range(number_of_items)]
@@ -24,8 +23,7 @@ def select_artists(number_of_items):
 def select_catalog_artists(size, size_va):
     artists = select_artists(size)
     for i in range(size_va):
-        index = random.randint(0, size-1)
-        artists[index] = 'Various Artists'
+        artists[i] = 'Various Artists'
     return artists
 
 def select_catalog(number_of_items):

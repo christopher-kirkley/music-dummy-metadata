@@ -48,3 +48,13 @@ def test_can_select_catalog_artists():
     artists = select_catalog_artists(5, 1)
     assert len(artists) == 5
     assert len(va_list(artists)) == 1
+
+    artists = select_catalog_artists(5, 2)
+    assert len(artists) == 5
+    assert len(va_list(artists)) == 2
+
+    artists = select_catalog_artists(5, 3)
+    assert len(artists) == 5
+    assert len(va_list(artists)) == 3
+
+    
