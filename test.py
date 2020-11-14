@@ -1,4 +1,4 @@
-from dummy import make_artist_list, select_artists, select_catalog, make_catalog_numbers, make_catalog_df, select_catalog_artists
+from dummy import make_artist_list, select_artists, select_catalog, make_catalog_numbers, make_catalog_df, select_catalog_artists, make_track_df, make_track_isrcs
 
 
 def test_pytest_working():
@@ -38,7 +38,7 @@ def test_can_select_catalog_artists():
     size = 5
     artists = select_artists(size)
 
-    def va_list(artists):
+    def indices_of_various_artists(artists):
         res = []
         for index, key in enumerate(artists):
             if artists[index] == 'Various Artists':
@@ -47,14 +47,24 @@ def test_can_select_catalog_artists():
     
     artists = select_catalog_artists(5, 1)
     assert len(artists) == 5
-    assert len(va_list(artists)) == 1
+    assert len(indices_of_various_artists(artists)) == 1
 
     artists = select_catalog_artists(5, 2)
     assert len(artists) == 5
-    assert len(va_list(artists)) == 2
+    assert len(indices_of_various_artists(artists)) == 2
 
     artists = select_catalog_artists(5, 3)
     assert len(artists) == 5
-    assert len(va_list(artists)) == 3
+    assert len(indices_of_various_artists(artists)) == 3
+
+def test_can_make_tracks_df():
+    df = make_track_df()
+    assert len(df) > 0
+
+def test_can_make_track_isrcs():
+    isrcs = make_track_isrcs()
+    assert len(isrcs) > 0
+    assert len(isrcs[0]) == 12
+    assert isrcs[0] == 'US1231900101'
 
     

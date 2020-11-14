@@ -42,12 +42,28 @@ def make_catalog_df(size, size_va):
     df['catalog_name']= select_catalog(size)
     return df
 
+def make_track_isrcs():
+    catalog_number = 1
+    tracks_per_catalog = random.randint(2, 10)
+    isrcs = []
+    for i in range(tracks_per_catalog):
+        isrcs.append(f'US12319{catalog_number:03d}{i+1:02d}')
+    return isrcs
+
+def make_track_df():
+    df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
+    df['isrcs'] = make_track_isrcs()
+    return df
+
+
+
+
+
 
 def main():
     df = make_catalog_df(5, 3)
     print(df)
 
-    df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
 
 
 if __name__ == '__main__':
