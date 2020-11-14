@@ -42,11 +42,12 @@ def make_catalog_df(size, size_va):
     df['catalog_name']= select_catalog(size)
     return df
 
-def make_track_isrcs(catalog_number):
+def make_track_isrcs():
+    catalog_number = 1
     tracks_per_catalog = random.randint(2, 10)
     isrcs = []
     for i in range(tracks_per_catalog):
-        isrcs.append(f'US12319{catalog_number[-3:]}{i+1:02d}')
+        isrcs.append(f'US12319{catalog_number:03d}{i+1:02d}')
     return isrcs
 
 def find_unique_catalog_numbers(catalog_df):
@@ -57,11 +58,10 @@ def make_track_df(catalog_df):
     df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
     catalog_numbers = find_unique_catalog_numbers(catalog_df)
     for catalog_number in catalog_numbers:
-        new_df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
-        new_df['isrc'] = make_track_isrcs(catalog_number)
-        new_df['catalog_number'] = catalog_number
-        df = df.append(new_df, ignore_index=True)
-    print(df)
+        df.append(df['isrc'] = make_track_isrcs())
+
+   #     df['catalog_number'] = catalog_number
+        print(df)
     return df
 
 
