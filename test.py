@@ -1,4 +1,4 @@
-from dummy import make_artist_list, select_artists, select_catalog, make_catalog_numbers, make_catalog_df, select_catalog_artists, make_track_df, make_track_isrcs, find_unique_catalog_numbers, make_track_artist
+from dummy import make_artist_list, select_artists, select_catalog, make_catalog_numbers, make_catalog_df, select_catalog_artists, make_track_df, make_track_isrcs, find_unique_catalog_numbers, make_track_artist, make_track_title
 
 
 def test_pytest_working():
@@ -79,6 +79,7 @@ def test_can_make_tracks_df():
     assert df['isrc'][0] == 'US1231900101'
     assert df['catalog_number'][0] == 'TR-001'
     assert df['track_number'][0] == 1
+    assert type(df['track_title'][0]) == str
     assert df['track_number'][1] == 2
     assert type(df['track_artist'][0]) == str
     assert df['isrc'][1] == 'US1231900102'
@@ -90,4 +91,10 @@ def test_can_make_tracks_df():
 def test_can_make_track_artist():
     artist = make_track_artist()
     assert type(artist) == str
+
+def test_can_make_track_title():
+    title = make_track_title()
+    assert type(title) == str
+
+
     

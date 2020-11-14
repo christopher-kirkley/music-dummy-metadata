@@ -46,6 +46,10 @@ def make_track_artist():
     artist = select_artists(1)[0]
     return artist
 
+def make_track_title():
+    title = select_catalog(1)[0]
+    return title
+
 def make_track_isrcs(catalog_number):
     tracks_per_catalog = random.randint(2, 10)
     isrcs = []
@@ -58,10 +62,10 @@ def find_unique_catalog_numbers(catalog_df):
     return catalog_numbers
 
 def make_track_df(catalog_df):
-    df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
+    df = pd.DataFrame(columns=['isrc', 'track_number', 'track_artist', 'track_title', 'catalog_number'])
     catalog_numbers = find_unique_catalog_numbers(catalog_df)
     for catalog_number in catalog_numbers:
-        new_df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
+        new_df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'track_title', 'catalog_number'])
         new_df['isrc'] = make_track_isrcs(catalog_number)
         new_df['catalog_number'] = catalog_number
         new_df['track_artist'] = make_track_artist()
@@ -72,6 +76,7 @@ def make_track_df(catalog_df):
             new_df['track_artist'] = catalog_artist
         for index, row in enumerate(new_df.iterrows()):
             new_df['track_number'][index] = index + 1
+            new_df['track_title'][index] = make_track_title()
         df = df.append(new_df, ignore_index=True)
 
     return df
