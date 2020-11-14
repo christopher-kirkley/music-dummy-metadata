@@ -42,6 +42,10 @@ def make_catalog_df(size, size_va):
     df['catalog_name']= select_catalog(size)
     return df
 
+def make_track_artist():
+    artist = select_artists(1)[0]
+    return artist
+
 def make_track_isrcs(catalog_number):
     tracks_per_catalog = random.randint(2, 10)
     isrcs = []
@@ -60,18 +64,23 @@ def make_track_df(catalog_df):
         new_df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'catalog_number'])
         new_df['isrc'] = make_track_isrcs(catalog_number)
         new_df['catalog_number'] = catalog_number
+        new_df['track_artist'] = make_track_artist()
+        catalog_artist = catalog_df.loc[catalog_df['catalog_number'] == catalog_number]['catalog_artist'].tolist()[0]
+        if catalog_artist == 'Various Artists':
+            new_df['track_artist'] = 'Various Artists'
+        else:
+            new_df['track_artist'] = catalog_artist
         df = df.append(new_df, ignore_index=True)
-    print(df)
     return df
 
 
 
 
-
-
 def main():
-    df = make_catalog_df(5, 3)
-    print(df)
+    catalog_df = make_catalog_df(5, 3)
+    print(catalog_df)
+    track_df = make_track_df(catalog_df)
+    print(track_df)
 
 
 
