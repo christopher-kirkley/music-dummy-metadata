@@ -70,7 +70,10 @@ def make_track_df(catalog_df):
             new_df['track_artist'] = 'Various Artists'
         else:
             new_df['track_artist'] = catalog_artist
+        for index, row in enumerate(new_df.iterrows()):
+            new_df['track_number'][index] = index + 1
         df = df.append(new_df, ignore_index=True)
+
     return df
 
 
