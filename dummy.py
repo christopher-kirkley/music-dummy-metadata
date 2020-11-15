@@ -81,14 +81,39 @@ def make_track_df(catalog_df):
 
     return df
 
+def make_upc():
+    upc = random.randint(10**(12-1), 10**12)
+    return upc
+
+def make_version_numbers(catalog_number):
+    version_numbers = []
+    types = ['digi', 'lp', 'cd', 'cass']
+    for type in types:
+        version_number = f'{catalog_number}{type}'
+        version_numbers.append(version_number)
+    return version_numbers
+
+
+def make_version_df(catalog_df):
+    df = pd.DataFrame(columns=['upc', 'version_number', 'format', 'version_title', 'catalog_number'])
+    catalog_numbers = find_unique_catalog_numbers(catalog_df)
+    for catalog_number in catalog_numbers:
+        new_df = pd.DataFrame(columns=['upc', 'version_number', 'format', 'version_title', 'catalog_number'])
+        new_df['version_number'] = make_version_numbers(catalog_number)
+        new_df['upc'] = make_upc()
+        new_df['catalog_number'] = catalog_number
+        print(new_df)
+        df = df.append(new_df, ignore_index=True)
+    print(df)
+    return df
 
 
 
 def main():
     catalog_df = make_catalog_df(5, 3)
-    print(catalog_df)
+    catalog_df.to_csv('catalog.csv')
     track_df = make_track_df(catalog_df)
-    print(track_df)
+    track_df.to_csv('track.csv')
 
 
 
