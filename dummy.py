@@ -9,38 +9,49 @@ fake = Faker()
 catalog_root = 'TR'
 number_of_items = 50
 
-def make_artist_list():
-    temp = open('./artistnames.txt').read().splitlines()
-    artist_source = [name.strip() for name in temp]
-    return artist_source
+class Artists():
+    def __init__(self, number_of_artists):
+        self.number_of_artists = number_of_artists
 
+    def make_artist_list(self):
+        temp = open('./artistnames.txt').read().splitlines()
+        artist_source = [name.strip() for name in temp]
+        return artist_source
 
 def select_artists(number_of_items):
     lines = open('./artistnames.txt').read().splitlines()
     artists = [random.choice(lines).strip() for name in range(number_of_items)]
     return artists
 
-def select_catalog_artists(size, size_va):
-    artists = select_artists(size)
-    for i in range(size_va):
-        artists[i] = 'Various Artists'
-    return artists
 
-def select_catalog(number_of_items):
-    lines = open('./artistnames.txt').read().splitlines()
-    catalog_names = [random.choice(lines).strip() for name in range(number_of_items)]
-    return catalog_names
+class Catalogs():
+    def __init__(self, catalog_root, number_of_items, size_va):
+        self.catalog_root = catalog_root
+        self.number_of_items = number_of_items
 
-def make_catalog_numbers(catalog_root, number_of_items):
-    catalog_numbers = [f'{catalog_root}-00{i}' for i in range(1, number_of_items+1)]
-    return catalog_numbers
+    def select_catalog_artists(self):
+        artists = select_artists(self.number_of_items)
+        for i in range(self.size_va):
+            artists[i] = 'Various Artists'
+        return artists
 
-def make_catalog_df(size, size_va):
-    df = pd.DataFrame(columns=['catalog_number', 'catalog_artist', 'catalog_name'])
-    df['catalog_number'] = make_catalog_numbers(catalog_root, size)
-    df['catalog_artist']= select_catalog_artists(size, size_va)
-    df['catalog_name']= select_catalog(size)
-    return df
+    def select_catalog(self):
+        lines = open('./artistnames.txt').read().splitlines()
+        catalog_names = [random.choice(lines).strip() for name in range(self.number_of_items)]
+        return catalog_names
+
+    def make_catalog_numbers(self):
+        catalog_numbers = [f'{self.catalog_root}-00{i}' for i in range(1, self.number_of_items+1)]
+        return catalog_numbers
+
+    def make_catalog_df(self):
+        df = pd.DataFrame(columns=['catalog_number', 'catalog_artist', 'catalog_name'])
+        df['catalog_number'] = self.make_catalog_numbers()
+        df['catalog_artist']= self.select_catalog_artists()
+        df['catalog_name']= self.select_catalog()
+        return df
+
+
 
 def make_track_artist():
     artist = select_artists(1)[0]
@@ -61,6 +72,14 @@ def find_unique_catalog_numbers(catalog_df):
     catalog_numbers = catalog_df['catalog_number'].unique().tolist()
     return catalog_numbers
 
+class tracks:
+    def __init__(self):
+        pass
+
+    def make_df(self):
+        pass
+
+
 def make_track_df(catalog_df):
     df = pd.DataFrame(columns=['isrc', 'track_number', 'track_artist', 'track_title', 'catalog_number'])
     catalog_numbers = find_unique_catalog_numbers(catalog_df)
@@ -71,7 +90,7 @@ def make_track_df(catalog_df):
         new_df['track_artist'] = make_track_artist()
         catalog_artist = catalog_df.loc[catalog_df['catalog_number'] == catalog_number]['catalog_artist'].tolist()[0]
         if catalog_artist == 'Various Artists':
-            new_df['track_artist'] = 'Various Artists'
+            new_df['track_artist'] = make_track_artist()
         else:
             new_df['track_artist'] = catalog_artist
         for index, row in enumerate(new_df.iterrows()):
@@ -87,7 +106,7 @@ def make_upc():
 
 def make_version_numbers(catalog_number):
     version_numbers = []
-    types = ['digi', 'lp', 'cd', 'cass']
+    types = ['dig', 'lp', 'cd', 'cass']
     for type in types:
         version_number = f'{catalog_number}{type}'
         version_numbers.append(version_number)
@@ -102,9 +121,7 @@ def make_version_df(catalog_df):
         new_df['version_number'] = make_version_numbers(catalog_number)
         new_df['upc'] = make_upc()
         new_df['catalog_number'] = catalog_number
-        print(new_df)
         df = df.append(new_df, ignore_index=True)
-    print(df)
     return df
 
 

@@ -1,34 +1,34 @@
-from dummy import make_artist_list, select_artists, select_catalog, make_catalog_numbers, make_catalog_df, select_catalog_artists, make_track_df, make_track_isrcs, find_unique_catalog_numbers, make_track_artist, make_track_title, make_version_df, make_upc, make_version_numbers
+from dummy import Artists, Catalogs
 
 
 def test_pytest_working():
     assert True
 
 def test_can_make_artist_list():
-    artist_source = make_artist_list()
+    artists = Artists(10)
+    assert artists.number_of_artists == 10
+    artist_source = artists.make_artist_list()
     assert len(artist_source) > 0
 
 def test_get_selection_of_working_artists():
-    size = 5
-    artist_selection = select_artists(5)
+    artists = Artists(5)
+    artist_selection = artists.select_artists(5)
     assert len(artist_selection) == 5
 
 def test_get_selection_of_catalog():
-    size = 5
-    catalog_selection = select_catalog(5)
+    catalogs = Catalogs('TR', 5, 1)
+    catalog_selection = catalogs.select_catalog()
     assert len(catalog_selection) == 5
 
 def test_create_catalog_numbers():
-    root = 'TR'
-    size = 5
-    catalog_numbers = make_catalog_numbers(root, size)
+    catalogs = Catalogs('TR', 5, 1)
+    catalog_numbers = catalogs.make_catalog_numbers()
     assert len(catalog_numbers) > 0
     assert catalog_numbers[0] == 'TR-001'
 
 def test_can_make_catalog_df():
-    size = 5
-    size_va = 0
-    df = make_catalog_df(size, size_va)
+    catalogs = Catalogs('TR', 5, 1)
+    df = catalogs.make_catalog_df()
     assert len(df) == 5
     assert df['catalog_number'][0] == 'TR-001'
     assert type(df['catalog_artist'][0]) == str
@@ -70,10 +70,9 @@ def test_can_find_unique_catalog_numbers():
     catalog_df = make_catalog_df(5, 0)
     catalog_numbers = find_unique_catalog_numbers(catalog_df)
     assert len(catalog_numbers) > 0
-    
 
 def test_can_make_tracks_df():
-    catalog_df = make_catalog_df(5, 0)
+    catalog_df = make_catalog_df(5, 1)
     df = make_track_df(catalog_df)
     assert len(df) > 0
     assert df['isrc'][0] == 'US1231900101'
@@ -87,6 +86,7 @@ def test_can_make_tracks_df():
         assert catalog_df['catalog_artist'][0] == df['track_artist'][0]
     if catalog_df['catalog_artist'][0] == 'Various Artists':
         assert str(df['track_artist'][0])
+        assert df['track_artist'][0] != 'Various Artists' 
 
 def test_can_make_track_artist():
     artist = make_track_artist()
@@ -101,7 +101,7 @@ def test_can_make_version_df():
     assert len(catalog_df) > 0
     df = make_version_df(catalog_df)
     assert len(df) > 0
-    assert type(df['upc'][0]) == str
+    assert type(df['upc'][0]) == int
 
 def test_can_make_upc():
     upc = make_upc()
