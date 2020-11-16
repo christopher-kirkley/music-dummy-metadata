@@ -13,27 +13,24 @@ class Artists():
     def __init__(self, number_of_artists):
         self.number_of_artists = number_of_artists
 
-    def make_artist_list(self):
-        temp = open('./artistnames.txt').read().splitlines()
-        artist_source = [name.strip() for name in temp]
-        return artist_source
-
-def select_artists(number_of_items):
-    lines = open('./artistnames.txt').read().splitlines()
-    artists = [random.choice(lines).strip() for name in range(number_of_items)]
-    return artists
+    def select_artists(self):
+        lines = open('./artistnames.txt').read().splitlines()
+        artists = [random.choice(lines).strip() for name in range(self.number_of_artists)]
+        return artists
 
 
 class Catalogs():
-    def __init__(self, catalog_root, number_of_items, size_va):
+    def __init__(self, catalog_root, number_of_items, size_va, artists):
+        self.artists = artists
         self.catalog_root = catalog_root
         self.number_of_items = number_of_items
+        self.size_va = size_va
 
     def select_catalog_artists(self):
-        artists = select_artists(self.number_of_items)
+        artist_selection = self.artists.select_artists()
         for i in range(self.size_va):
-            artists[i] = 'Various Artists'
-        return artists
+            artist_selection[i] = 'Various Artists'
+        return artist_selection
 
     def select_catalog(self):
         lines = open('./artistnames.txt').read().splitlines()
@@ -53,6 +50,23 @@ class Catalogs():
 
 
 
+class Isrcs():
+    def __init__(self, catalogs, artists, catalog_df):
+        self.catalogs = catalogs
+        self.artists = artists
+        self.catalog_df = catalog_df
+
+    def make_track_isrcs(self, catalog_number):
+        tracks_per_catalog = random.randint(2, 10)
+        isrcs = []
+        for i in range(tracks_per_catalog):
+            isrcs.append(f'US12319{catalog_number[-3:]}{i+1:02d}')
+        return isrcs
+
+    def find_unique_catalog_numbers(self):
+        catalog_numbers = self.catalog_df['catalog_number'].unique().tolist()
+        return catalog_numbers
+
 def make_track_artist():
     artist = select_artists(1)[0]
     return artist
@@ -61,16 +75,7 @@ def make_track_title():
     title = select_catalog(1)[0]
     return title
 
-def make_track_isrcs(catalog_number):
-    tracks_per_catalog = random.randint(2, 10)
-    isrcs = []
-    for i in range(tracks_per_catalog):
-        isrcs.append(f'US12319{catalog_number[-3:]}{i+1:02d}')
-    return isrcs
 
-def find_unique_catalog_numbers(catalog_df):
-    catalog_numbers = catalog_df['catalog_number'].unique().tolist()
-    return catalog_numbers
 
 class tracks:
     def __init__(self):
