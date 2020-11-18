@@ -41,6 +41,12 @@ class Catalogs():
             catalog_artists[i] = 'Various Artists'
         return catalog_artists
 
+    def select_artists(self):
+        lines = open('./artistnames.txt').read().splitlines()
+        artists = [random.choice(lines).strip() for name in range(self.number_of_artists)]
+        return artists
+
+
     def make_catalog_names(self):
         lines = open('./artistnames.txt').read().splitlines()
         catalog_names = [random.choice(lines).strip() for name in range(len(lines))]
@@ -69,12 +75,6 @@ def random_phrase():
 #     catalog_numbers = catalog_df['catalog_number'].unique().tolist()
 #     return catalog_numbers
 
-def make_track_isrcs(catalog_number):
-    tracks_per_catalog = random.randint(2, 10)
-    isrcs = []
-    for i in range(tracks_per_catalog):
-        isrcs.append(f'US12319{catalog_number[-3:]}{i+1:02d}')
-    return isrcs
 
 def make_upc():
     upc = random.randint(10**(12-1), 10**12)
