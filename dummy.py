@@ -11,46 +11,58 @@ fake = Faker()
 catalog_root = 'TR'
 number_of_items = 50
 
+class Artists():
+    def __init__(self, number_of_artists):
+        self.number_of_artists = number_of_artists
+        self.artist_list = self.make_artist_list()
+
+    def make_artist_list(self):
+        lines = open('./artistnames.txt').read().splitlines()
+        artist_list = [random.choice(lines).strip() for name in range(self.number_of_artists)]
+        return artist_list
+
+    def random_artist(self):
+        artist = random.choice(self.artist_list)
+        return artist
+
+
 class Catalogs():
-    def __init__(self, catalog_root, number_of_catalogs, size_va):
+    def __init__(self, catalog_root, number_of_catalogs, size_va, artist_list):
         self.catalog_root = catalog_root
         self.number_of_catalogs = number_of_catalogs
         self.size_va = size_va
+        self.artist_list = artist_list
+        self.catalog_artists = self.make_catalog_artists()
+        self.catalog_names = self.make_catalog_names()
 
-    def select_catalog_artists(self):
-        artists = make_artist_list(self.number_of_catalogs)
+    def make_catalog_artists(self):
+        catalog_artists = self.artist_list[0:self.number_of_catalogs]
         for i in range(self.size_va):
-            artists[i] = 'Various Artists'
-        return artists
+            catalog_artists[i] = 'Various Artists'
+        return catalog_artists
 
-    def select_catalog(self):
+    def make_catalog_names(self):
         lines = open('./artistnames.txt').read().splitlines()
-        catalog_names = [random.choice(lines).strip() for name in range(self.number_of_catalogs)]
+        catalog_names = [random.choice(lines).strip() for name in range(len(lines))]
         return catalog_names
-
-    def make_catalog_numbers(self):
-        catalog_numbers = [f'{self.catalog_root}-00{i}' for i in range(1, self.number_of_catalogs+1)]
-        return catalog_numbers
 
     def make_catalog_items(self):
         catalog_items = []
-        artists = self.select_catalog_artists()
         for i in range(self.number_of_catalogs):
             entry = {'catalog_number': f'{self.catalog_root}-00{i+1}', 
-                    'catalog_artist': artists[i],
+                    'catalog_artist': self.catalog_artists[i],
+                    'catalog_name': self.catalog_names[i],
                     }
             catalog_items.append(entry)
         return catalog_items
 
-def make_artist_list(number_of_items):
-    lines = open('./artistnames.txt').read().splitlines()
-    artist_list = [random.choice(lines).strip() for name in range(number_of_items)]
-    return artist_list
 
-def random_phrase(artist_list):
-    index = random.randint(1, 9)
-    phrase = artist_list[index]
-    return phrase
+def random_phrase():
+    lines = open('./artistnames.txt').read().splitlines()
+    random_phrases = [random.choice(lines).strip() for name in range(len(lines))]
+    index = random.randint(1, len(random_phrases))
+    random_phrase = random_phrases[index]
+    return random_phrase
 
 
 # def find_unique_catalog_numbers(catalog_df):
@@ -64,8 +76,7 @@ def make_track_isrcs(catalog_number):
         isrcs.append(f'US12319{catalog_number[-3:]}{i+1:02d}')
     return isrcs
 
-def make_df(catalogs):
-    artist_list= make_artist_list(10)
+def make_df(catalogs, artists):
     catalog_items = catalogs.make_catalog_items()
     data = {
             'isrc': [],
@@ -79,56 +90,17 @@ def make_df(catalogs):
         isrcs = make_track_isrcs(catalog_item['catalog_number'])
         for isrc in isrcs:
             data['isrc'].append(isrc)
-            data['track_title'].append('cheese')
+            data['track_title'].append(random_phrase())
             if catalog_item['catalog_artist'] == 'Various Artists':
-                data['track_artist'].append(random_phrase(artist_list))
+                data['track_artist'].append(artists.random_artist())
             else:
                 data['track_artist'].append(catalog_item['catalog_artist'])
             data['catalog_number'].append(catalog_item['catalog_number'])
             data['catalog_artist'].append(catalog_item['catalog_artist'])
-            data['catalog_name'].append('name')
+            data['catalog_name'].append(catalog_item['catalog_name'])
     df = pd.DataFrame(data)
     return df
         
-
-
-#     catalog_numbers = find_unique_catalog_numbers(catalog_df)
-#     for catalog_number in catalog_numbers:
-
-        # new_df = pd.DataFrame(columns=['isrc', 'track_artist', 'track_number', 'track_title', 'catalog_number'])
-        # new_df['isrc'] = make_track_isrcs(catalog_number)
-        # new_df['catalog_number'] = catalog_number
-        # new_df['track_artist'] = make_track_artist()
-        # catalog_artist = catalog_df.loc[catalog_df['catalog_number'] == catalog_number]['catalog_artist'].tolist()[0]
-        # if catalog_artist == 'Various Artists':
-        #     new_df['track_artist'] = make_track_artist()
-        # else:
-        #     new_df['track_artist'] = catalog_artist
-        # for index, row in enumerate(new_df.iterrows()):
-        #     new_df['track_number'][index] = index + 1
-        #     new_df['track_title'][index] = make_track_title()
-        # df = df.append(new_df, ignore_index=True)
-    
-
-
-
-
-
-class Tracks():
-    def __init__(self):
-        pass
-
-
-# def make_track_artist():
-#     artist = select_artists(1)[0]
-#     return artist
-
-# def make_track_title():
-#     title = select_catalog(1)[0]
-#     return title
-
-
-
 
 
 # def make_track_df(catalog_df):
@@ -163,9 +135,11 @@ class Tracks():
 
 
 def main():
-    catalogs = Catalogs('TR', 5, 2)
-    df = make_df(catalogs)
+    artists = Artists(10)
+    catalogs = Catalogs('TR', 5, 2, artists.artist_list)
+    df = make_df(catalogs, artists)
     print(df)
+    df.to_csv('out.csv', index=False)
 
 
 
