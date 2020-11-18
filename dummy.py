@@ -76,7 +76,29 @@ def make_track_isrcs(catalog_number):
         isrcs.append(f'US12319{catalog_number[-3:]}{i+1:02d}')
     return isrcs
 
-def make_df(catalogs, artists):
+def make_upc():
+    upc = random.randint(10**(12-1), 10**12)
+    return upc
+
+def make_versions(catalog_number):
+    version_numbers = []
+    types = ['dig', 'lp', 'cd', 'cass']
+    for type in types:
+        version_number = f'{catalog_number}{type}'
+        version_numbers.append(version_number)
+    return version_numbers
+
+def make_version_items(catalog_number):
+    version_items = []
+    types = ['dig', 'lp', 'cd', 'cass']
+    for type in types:
+        entry = {'version_number': f'{catalog_number}{type}',
+                'upc': make_upc(),
+                }
+        version_items.append(entry)
+    return version_items
+
+def make_catalog_df(catalogs, artists):
     catalog_items = catalogs.make_catalog_items()
     data = {
             'isrc': [],
@@ -84,9 +106,11 @@ def make_df(catalogs, artists):
             'track_title': [],
             'catalog_number':[],
             'catalog_artist': [],
-            'catalog_name': []
+            'catalog_name': [],
             }
     for catalog_item in catalog_items:
+        # version_items = make_version_items(catalog_item['catalog_number'])
+        # for version_item in version_items:
         isrcs = make_track_isrcs(catalog_item['catalog_number'])
         for isrc in isrcs:
             data['isrc'].append(isrc)
@@ -98,28 +122,26 @@ def make_df(catalogs, artists):
             data['catalog_number'].append(catalog_item['catalog_number'])
             data['catalog_artist'].append(catalog_item['catalog_artist'])
             data['catalog_name'].append(catalog_item['catalog_name'])
+            # data['upc'].append(version_item['upc'])
+            # data['version_number'].append(version_item['version_number'])
     df = pd.DataFrame(data)
     return df
-        
 
-
-# def make_track_df(catalog_df):
-#     df = pd.DataFrame(columns=['isrc', 'track_number', 'track_artist', 'track_title', 'catalog_number'])
-
-#     return df
-
-# def make_upc():
-#     upc = random.randint(10**(12-1), 10**12)
-#     return upc
-
-# def make_version_numbers(catalog_number):
-#     version_numbers = []
-#     types = ['dig', 'lp', 'cd', 'cass']
-#     for type in types:
-#         version_number = f'{catalog_number}{type}'
-#         version_numbers.append(version_number)
-#     return version_numbers
-
+def make_version_df(catalogs):
+    catalog_items = catalogs.make_catalog_items()
+    data = {
+            'upc': [],
+            'version_number': [],
+            'catalog_number': [],
+            }
+    for catalog_item in catalog_items:
+        version_items = make_version_items(catalog_item['catalog_number'])
+        for version_item in version_items:
+            data['catalog_number'].append(catalog_item['catalog_number'])
+            data['upc'].append(version_item['upc'])
+            data['version_number'].append(version_item['version_number'])
+    df = pd.DataFrame(data)
+    return df
 
 # def make_version_df(catalog_df):
 #     df = pd.DataFrame(columns=['upc', 'version_number', 'format', 'version_title', 'catalog_number'])
@@ -137,9 +159,11 @@ def make_df(catalogs, artists):
 def main():
     artists = Artists(10)
     catalogs = Catalogs('TR', 5, 2, artists.artist_list)
-    df = make_df(catalogs, artists)
+    catalog_df = make_catalog_df(catalogs, artists)
+    version_df = make_version_df(catalogs, artists)
     print(df)
-    df.to_csv('out.csv', index=False)
+    catalog_df.to_csv('catalog.csv', index=False)
+    version_df.to_csv('version.csv', index=False)
 
 
 

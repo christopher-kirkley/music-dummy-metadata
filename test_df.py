@@ -1,4 +1,4 @@
-from dummy import Catalogs, make_df, make_track_isrcs, Artists
+from dummy import Catalogs, make_catalog_df, make_track_isrcs, Artists, make_versions, make_upc, make_version_df
 
 
 def test_pytest_working():
@@ -17,7 +17,7 @@ def test_can_create_catalog_dict():
 def test_can_make_catalog_df():
     artists = Artists(10)
     catalogs = Catalogs('TR', 5, 1, artists.artist_list)
-    df = make_df(catalogs, artists)
+    df = make_catalog_df(catalogs, artists)
     artist_list = artists.artist_list
     assert len(df) > 5
     assert df['catalog_number'][0] == 'TR-001'
@@ -52,86 +52,24 @@ def test_can_make_track_isrcs():
 def test_can_create_unique_catalog_name():
     artists = Artists(10)
     catalogs = Catalogs('TR', 5, 1, artists.artist_list)
-    df = make_df(catalogs, artists)
+    df = make_catalog_df(catalogs, artists)
     catalog_numbers = df['catalog_number'].unique().tolist()
     catalog_name_1 = df.loc[df['catalog_number'] == catalog_numbers[0]]['catalog_name'].tolist()
     catalog_name_2 = df.loc[df['catalog_number'] == catalog_numbers[1]]['catalog_name'].tolist()
     assert catalog_name_1[0] != catalog_name_2[0]
 
     
+def test_can_make_version_df():
+    artists = Artists(10)
+    catalogs = Catalogs('TR', 5, 1, artists.artist_list)
+    df = make_version_df(catalogs)
+    assert len(df) > 0
 
-
+def test_can_make_upc():
+    upc = make_upc()
+    assert len(str(upc)) == 12
     
-
-
-# def test_can_select_catalog_artists():
-#     size = 5
-#     artists = select_artists(size)
-
-#     def indices_of_various_artists(artists):
-#         res = []
-#         for index, key in enumerate(artists):
-#             if artists[index] == 'Various Artists':
-#                 res.append(index)
-#         return res
-    
-#     artists = select_catalog_artists(5, 1)
-#     assert len(artists) == 5
-#     assert len(indices_of_various_artists(artists)) == 1
-
-#     artists = select_catalog_artists(5, 2)
-#     assert len(artists) == 5
-#     assert len(indices_of_various_artists(artists)) == 2
-
-#     artists = select_catalog_artists(5, 3)
-#     assert len(artists) == 5
-#     assert len(indices_of_various_artists(artists)) == 3
-
-
-
-
-# def test_can_find_unique_catalog_numbers():
-#     catalog_df = make_catalog_df(5, 0)
-#     catalog_numbers = find_unique_catalog_numbers(catalog_df)
-#     assert len(catalog_numbers) > 0
-
-# def test_can_make_tracks_df():
-#     catalog_df = make_catalog_df(5, 1)
-#     df = make_track_df(catalog_df)
-#     assert len(df) > 0
-#     assert df['isrc'][0] == 'US1231900101'
-#     assert df['catalog_number'][0] == 'TR-001'
-#     assert df['track_number'][0] == 1
-#     assert type(df['track_title'][0]) == str
-#     assert df['track_number'][1] == 2
-#     assert type(df['track_artist'][0]) == str
-#     assert df['isrc'][1] == 'US1231900102'
-#     if catalog_df['catalog_artist'][0] != 'Various Artists':
-#         assert catalog_df['catalog_artist'][0] == df['track_artist'][0]
-#     if catalog_df['catalog_artist'][0] == 'Various Artists':
-#         assert str(df['track_artist'][0])
-#         assert df['track_artist'][0] != 'Various Artists' 
-
-# def test_can_make_track_artist():
-#     artist = make_track_artist()
-#     assert type(artist) == str
-
-# def test_can_make_track_title():
-#     title = make_track_title()
-#     assert type(title) == str
-
-# def test_can_make_version_df():
-#     catalog_df = make_catalog_df(5, 0)
-#     assert len(catalog_df) > 0
-#     df = make_version_df(catalog_df)
-#     assert len(df) > 0
-#     assert type(df['upc'][0]) == int
-
-# def test_can_make_upc():
-#     upc = make_upc()
-#     assert len(str(upc)) == 12
-    
-# def test_can_make_version_numbers():
-#     catalog_number = 'TR-001'
-#     version_numbers = make_version_numbers(catalog_number)
-#     assert len(version_numbers) > 0
+def test_can_make_version_numbers():
+    catalog_number = 'TR-001'
+    version_numbers = make_versions(catalog_number)
+    assert len(version_numbers) > 0
