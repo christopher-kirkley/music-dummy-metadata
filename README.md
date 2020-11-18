@@ -3,17 +3,28 @@ Generate dummy music metadata for testing
 
 This is a small CLI script to create dummy music data for use in testing music based applications.
 
+The output is a single CSV file representing a dummy record label's catalog.
+
+Included fields:
+
+- ISRC
+- Track Number
+- Track Title
+- Track Artist
+- Catalog Number
+- Catalog Artist
+- Catalog Title
+- UPC
+- Version Number
+- Version Title
+
+## Dependencies
+
+- Pandas
+
+Source txt for band names comes from Brian Whitman's "Ten Thousand Statistically Grammar-Average Fake Band Names" [https://alumni.media.mit.edu/~bwhitman/10000.html](https://alumni.media.mit.edu/~bwhitman/10000.html)
+
+
 ## Usage
 
-
-## ISRCs
-
-Will generate a 12 digit ISRC code in the form "CC-XXX-YY-NNNNN". The format of the ISRC code is per the following standard.
-
-"CC" is the two country character code.
-"XXX" is the alphanumeric code of the ISRC issuer.
-"YY" is the two digit reference year.
-"NNNNN" is a 5 digit number that identifies the sound recording.
-
-
-[wiki](https://en.wikipedia.org/wiki/International_Standard_Recording_Code)
+> python dummy.py
