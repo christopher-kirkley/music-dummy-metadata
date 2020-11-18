@@ -1,33 +1,32 @@
-from dummy import Artists, Catalogs
+import pytest
+
+from dummy import Artists, Catalogs, Isrcs
 
 
 def test_pytest_working():
     assert True
 
-def test_can_make_artist_list():
-    artists = Artists(10)
-    assert artists.number_of_artists == 10
-    artist_source = artists.make_artist_list()
-    assert len(artist_source) > 0
-
 def test_get_selection_of_working_artists():
     artists = Artists(5)
-    artist_selection = artists.select_artists(5)
+    artist_selection = artists.select_artists()
     assert len(artist_selection) == 5
 
 def test_get_selection_of_catalog():
-    catalogs = Catalogs('TR', 5, 1)
+    artists = Artists(5)
+    catalogs = Catalogs('TR', 5, 1, artists)
     catalog_selection = catalogs.select_catalog()
     assert len(catalog_selection) == 5
 
 def test_create_catalog_numbers():
-    catalogs = Catalogs('TR', 5, 1)
+    artists = Artists(5)
+    catalogs = Catalogs('TR', 5, 1, artists)
     catalog_numbers = catalogs.make_catalog_numbers()
     assert len(catalog_numbers) > 0
     assert catalog_numbers[0] == 'TR-001'
 
 def test_can_make_catalog_df():
-    catalogs = Catalogs('TR', 5, 1)
+    artists = Artists(5)
+    catalogs = Catalogs('TR', 5, 1, artists)
     df = catalogs.make_catalog_df()
     assert len(df) == 5
     assert df['catalog_number'][0] == 'TR-001'
@@ -35,40 +34,39 @@ def test_can_make_catalog_df():
     assert type(df['catalog_name'][0]) == str
 
 def test_can_select_catalog_artists():
-    size = 5
-    artists = select_artists(size)
+    artists = Artists(5)
+    catalogs = Catalogs('TR', 5, 1, artists)
+    catalog_artists = catalogs.select_catalog_artists()
 
-    def indices_of_various_artists(artists):
+    def indices_of_various_artists(catalog_artists):
         res = []
-        for index, key in enumerate(artists):
-            if artists[index] == 'Various Artists':
+        for index, key in enumerate(catalog_artists):
+            if catalog_artists[index] == 'Various Artists':
                 res.append(index)
         return res
     
-    artists = select_catalog_artists(5, 1)
-    assert len(artists) == 5
-    assert len(indices_of_various_artists(artists)) == 1
-
-    artists = select_catalog_artists(5, 2)
-    assert len(artists) == 5
-    assert len(indices_of_various_artists(artists)) == 2
-
-    artists = select_catalog_artists(5, 3)
-    assert len(artists) == 5
-    assert len(indices_of_various_artists(artists)) == 3
-
+    catalog_artists = catalogs.select_catalog_artists()
+    assert len(catalog_artists) == 5
+    assert len(indices_of_various_artists(catalog_artists)) == 1
 
 def test_can_make_track_isrcs():
-    isrcs = make_track_isrcs('TR-001')
-    assert len(isrcs) > 0
-    assert len(isrcs[0]) == 12
-    assert isrcs[0] == 'US1231900101'
-    assert isrcs[1] == 'US1231900102'
+    artists = Artists(5)
+    catalogs = Catalogs('TR', 5, 1, artists)
+    catalog_df = catalogs.make_catalog_df()
+    isrcs = Isrcs(catalogs, artists, catalog_df)
+    isrc_selection = isrcs.make_track_isrcs('TR-001')
+    assert len(isrc_selection) > 0
+    assert len(isrc_selection[0]) == 12
+    assert isrc_selection[0] == 'US1231900101'
+    assert isrc_selection[1] == 'US1231900102'
 
 
 def test_can_find_unique_catalog_numbers():
-    catalog_df = make_catalog_df(5, 0)
-    catalog_numbers = find_unique_catalog_numbers(catalog_df)
+    artists = Artists(5)
+    catalogs = Catalogs('TR', 5, 1, artists)
+    catalog_df = catalogs.make_catalog_df()
+    isrcs = Isrcs(catalogs, artists, catalog_df)
+    catalog_numbers = isrcs.find_unique_catalog_numbers()
     assert len(catalog_numbers) > 0
 
 def test_can_make_tracks_df():
