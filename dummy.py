@@ -32,6 +32,16 @@ class Catalogs():
         catalog_numbers = [f'{self.catalog_root}-00{i}' for i in range(1, self.number_of_catalogs+1)]
         return catalog_numbers
 
+    def make_catalog_items(self):
+        catalog_items = []
+        artists = self.select_catalog_artists()
+        for i in range(self.number_of_catalogs):
+            entry = {'catalog_number': f'{self.catalog_root}-00{i+1}', 
+                    'catalog_artist': artists[i],
+                    }
+            catalog_items.append(entry)
+        return catalog_items
+
 def make_artist_list(number_of_items):
     lines = open('./artistnames.txt').read().splitlines()
     artist_list = [random.choice(lines).strip() for name in range(number_of_items)]
@@ -56,7 +66,7 @@ def make_track_isrcs(catalog_number):
 
 def make_df(catalogs):
     artist_list= make_artist_list(10)
-    catalog_numbers = catalogs.make_catalog_numbers()
+    catalog_items = catalogs.make_catalog_items()
     data = {
             'isrc': [],
             'track_artist': [],
@@ -65,14 +75,17 @@ def make_df(catalogs):
             'catalog_artist': [],
             'catalog_name': []
             }
-    for catalog_number in catalog_numbers:
-        isrcs = make_track_isrcs(catalog_number)
+    for catalog_item in catalog_items:
+        isrcs = make_track_isrcs(catalog_item['catalog_number'])
         for isrc in isrcs:
             data['isrc'].append(isrc)
-            data['track_artist'].append(random_phrase(artist_list))
             data['track_title'].append('cheese')
-            data['catalog_number'].append(catalog_number)
-            data['catalog_artist'].append('3')
+            if catalog_item['catalog_artist'] == 'Various Artists':
+                data['track_artist'].append(random_phrase(artist_list))
+            else:
+                data['track_artist'].append(catalog_item['catalog_artist'])
+            data['catalog_number'].append(catalog_item['catalog_number'])
+            data['catalog_artist'].append(catalog_item['catalog_artist'])
             data['catalog_name'].append('name')
     df = pd.DataFrame(data)
     return df
