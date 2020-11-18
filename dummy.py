@@ -143,25 +143,11 @@ def make_version_df(catalogs):
     df = pd.DataFrame(data)
     return df
 
-# def make_version_df(catalog_df):
-#     df = pd.DataFrame(columns=['upc', 'version_number', 'format', 'version_title', 'catalog_number'])
-#     catalog_numbers = find_unique_catalog_numbers(catalog_df)
-#     for catalog_number in catalog_numbers:
-#         new_df = pd.DataFrame(columns=['upc', 'version_number', 'format', 'version_title', 'catalog_number'])
-#         new_df['version_number'] = make_version_numbers(catalog_number)
-#         new_df['upc'] = make_upc()
-#         new_df['catalog_number'] = catalog_number
-#         df = df.append(new_df, ignore_index=True)
-#     return df
-
-
-
 def main():
     artists = Artists(10)
     catalogs = Catalogs('TR', 5, 2, artists.artist_list)
     catalog_df = make_catalog_df(catalogs, artists)
-    version_df = make_version_df(catalogs, artists)
-    print(df)
+    version_df = make_version_df(catalogs)
     catalog_df.to_csv('catalog.csv', index=False)
     version_df.to_csv('version.csv', index=False)
 
