@@ -7,7 +7,7 @@ The output is two CSV files representing a dummy record label's catalog.
 
 Included fields:
 
-###catalog.csv
+### catalog.csv
 - ISRC
 - Track Number
 - Track Title
@@ -16,7 +16,7 @@ Included fields:
 - Catalog Artist
 - Catalog Title
 
-###version.csv
+### version.csv
 - UPC
 - Version Number
 - Version Title
