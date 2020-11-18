@@ -36,6 +36,12 @@ def clean_names(df, indexes):
 
 def main():
     df = import_csv()
+    buyer_names = find_unique_buyers(df)
+    for buyer_name in buyer_names:
+        indexes = find_indexes_of_buyer(df, buyer_name)
+        df = clean_names(df, indexes)
+    df.to_csv('out.csv')
+
 
 if __name__ == '__main__':
     main()
