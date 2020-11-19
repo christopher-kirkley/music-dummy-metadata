@@ -39,6 +39,24 @@ def clean_names(df):
         df = change_info(df, indexes)
     return df
 
+def find_indexes_of_physical_items(df):
+    indexes = df.index[df['item type'] == 'package'].tolist()
+    return indexes
+
+def load_catalog():
+    path = os.getcwd() + '/catalog.csv'
+    df = pd.read_csv(path, encoding='utf-8')
+    return df
+
+def load_version():
+    path = os.getcwd() + '/version.csv'
+    df = pd.read_csv(path, encoding='utf-8')
+    return df
+
+def change_physical_item(df, indexes):
+    for index in indexes:
+        df.at[index, 'item name'] = 'd'
+    return df
 
 
 
