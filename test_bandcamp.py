@@ -1,8 +1,8 @@
 import os
 
-from clean import find_indexes_of_physical_items, load_catalog, load_version,change_physical_item, make_df
+from clean import load_catalog, load_version, make_df
 
-from clean import Bandcamp_df
+from clean import Bandcamp_df, Catalog
 
 def test_true():
     assert True
@@ -12,8 +12,12 @@ def test_can_create_df():
     assert len(df) > 0
 
 def test_can_initialize_bandcamp_df():
+    catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
     df = make_df()
-    bandcamp = Bandcamp_df(df)
+    bandcamp = Bandcamp_df(df, catalog_info)
     assert len(df) == len(bandcamp.df)
 
 def test_can_clean_names():
@@ -21,21 +25,29 @@ def test_can_clean_names():
     assert len(buyer_names) > 0
 
 def test_can_find_index_of_buyer():
+    catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
     df = make_df()
-    bandcamp = Bandcamp_df(df)
+    bandcamp = Bandcamp_df(df, catalog_info)
     buyer_name = 'Lou Bob'
-    indexes = bandcamp.find_indexes_of_buyer(buyer_name)
+    indexes = bandcamp.buyer_indexes(buyer_name)
     assert len(indexes) == 3
     assert indexes[0] == 1
     assert indexes[1] == 2
     assert df.loc[indexes[0]]['buyer name'] == 'Lou Bob'
     assert df.loc[indexes[1]]['buyer name'] == 'Lou Bob'
 
-def test_can_change_buyer_info():
+def test_can_find_indexes_of_buyer():
+    catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
     df = make_df()
-    bandcamp = Bandcamp_df(df)
+    bandcamp = Bandcamp_df(df, catalog_info)
     buyer_name = 'Lou Bob'
-    indexes = bandcamp.find_indexes_of_buyer(buyer_name)
+    indexes = bandcamp.buyer_indexes(buyer_name)
     assert df.loc[indexes[0]]['buyer email'] == 'oldemail@gmail.com'
     assert df.loc[indexes[0]]['buyer phone'] == 'oldphone'
     assert df.loc[indexes[0]]['ship to name'] == 'Lou Bob'
@@ -49,8 +61,12 @@ def test_can_change_buyer_info():
     assert df.loc[indexes[0]]['ship to street'] != 'oldaddress'
 
 def test_can_clean_names():
+    catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
     df = make_df()
-    bandcamp = Bandcamp_df(df)
+    bandcamp = Bandcamp_df(df, catalog_info)
     df = bandcamp.clean_names()
     assert df.loc[1]['buyer name'] != 'Lou Bob'
     assert df.loc[1]['buyer email'] != 'oldemail@gmail.com'
@@ -59,9 +75,13 @@ def test_can_clean_names():
     assert df.loc[1]['ship to street'] != 'oldaddress'
 
 def test_can_find_indexes_of_physical_items():
+    catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
     df = make_df()
-    bandcamp = Bandcamp_df(df)
-    indexes = find_indexes_of_physical_items(df)
+    bandcamp = Bandcamp_df(df, catalog_info)
+    indexes = bandcamp.physical_indexes()
     assert len(indexes) > 0
     assert indexes[0] == 1
     assert indexes[1] == 5
@@ -77,13 +97,25 @@ def test_can_load_version():
     assert len(version_df) > 0
 
 def test_can_change_physical_item():
+    catalog_info = [{'catalog_number': 'TR-001'}]
     df = make_df()
+    bandcamp = Bandcamp_df(df, catalog_info)
+    indexes = bandcamp.physical_indexes()
+    df = bandcamp.change_physical_item(indexes)
+    assert df.loc[1]['catalog_number'] == 'TR-001'
+    assert df.loc[1]['item name'] == 'TR-00'
+
+def test_can_get_catalog_selection():
     catalog_df = load_catalog()
     version_df = load_version()
-    indexes = find_indexes_of_physical_items(df)
-    df = change_physical_item(df, indexes)
-    assert df.loc[1]['item name'] == 'Eghass Malan'
-
-def test_can_get_catalog_item():
+    catalog = Catalog(catalog_df, version_df, 3)
+    assert len(catalog.catalog_selection()) == 3
+    
+def test_can_find_catalog_info():
     catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
+    assert len(catalog_info) == 3
+
 
