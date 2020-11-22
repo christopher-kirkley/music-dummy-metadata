@@ -102,9 +102,27 @@ def test_can_change_physical_item():
                 'catalog_number': 'TR-001',
                 'catalog_name': 'Bobo',
                 'catalog_artist': 'Tomato Jones',
-                'version_number': 'TR-001lp',
-                'upc': '1234',
-                }]
+                'version': [
+                    {
+                        'version_number': 'TR-001lp',
+                        'upc': '1234',
+                        },
+                    {
+                        'version_number': 'TR-001lp',
+                        'upc': '1234',
+                        },
+                    {
+                        'version_number': 'TR-001lp',
+                        'upc': '1234',
+                        },
+                    {
+                        'version_number': 'TR-001lp',
+                        'upc': '1234',
+                        },
+                    ]
+                }
+                    
+                ]
     df = make_df()
     bandcamp = Bandcamp_df(df, catalog_info)
     indexes = bandcamp.physical_indexes()
@@ -152,4 +170,5 @@ def test_can_make_catalog_entry_df():
     catalog_number = 'TR-001'
     version_info = catalog.find_version_info(catalog_number)
     assert len(version_info) > 0
+    assert version_info == ''
 

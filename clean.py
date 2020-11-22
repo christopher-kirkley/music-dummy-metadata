@@ -52,12 +52,13 @@ class Bandcamp_df():
 
     def change_physical_item(self, indexes):
         for index in indexes:
+            key = random.randint(0, 3)
             catalog_item = random.choice(self.catalog_info)
             self.df.at[index, 'catalog number'] = catalog_item['catalog_number']
             self.df.at[index, 'item name'] = catalog_item['catalog_name']
             self.df.at[index, 'artist'] = catalog_item['catalog_artist']
-            self.df.at[index, 'sku'] = catalog_item['version_number']
-            self.df.at[index, 'upc'] = catalog_item['upc']
+            self.df.at[index, 'sku'] = catalog_item['version'][key]['version_number']
+            self.df.at[index, 'upc'] = catalog_item['version'][key]['upc']
             self.df.at[index, 'item url'] = ''
         return self.df
 
@@ -81,12 +82,18 @@ class Catalog():
         for catalog_number in self.catalog_selection():
             version_info = self.find_version_info(catalog_number)
             key = random.randint(0,3)
+            version = []
+            for index, info in enumerate(version_info['version_number']):
+                version.append(
+                        {
+                            'version_number': info,
+                            'upc': version_info['upc'][index],
+                            })
             entry = {
                     'catalog_number': catalog_number,
                     'catalog_name': version_info['catalog_name'][key],
                     'catalog_artist': version_info['catalog_artist'][key],
-                    'version_number': version_info['version_number'][key],
-                    'upc': version_info['upc'][key],
+                    'version': version
                     }
             catalog_info.append(entry)
         return catalog_info
@@ -120,7 +127,15 @@ def load_version():
 
 
 def main():
-    df = import_csv()
+    catalog_df = load_catalog()
+    version_df = load_version()
+    catalog = Catalog(catalog_df, version_df, 3)
+    catalog_info = catalog.find_catalog_info()
+    df = make_df()
+    bandcamp = Bandcamp_df(df, catalog_info)
+    indexes = bandcamp.physical_indexes()
+    df = bandcamp.change_physical_item(indexes)
+
     df.to_csv('out.csv')
 
 
