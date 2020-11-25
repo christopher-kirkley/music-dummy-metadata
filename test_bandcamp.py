@@ -4,8 +4,26 @@ from clean import load_catalog, load_version, make_df
 
 from clean import Bandcamp_df, Catalog
 
-def test_true():
-    assert True
+def make_test_json():
+    catalog_json = {
+            'catalog_number': 'TR-001',
+            'catalog_name': 'Cheeseburger',
+            'catalog_artist': 'Stevie B.',
+            'versions': [
+                {
+                    'version_number': 'TR-001lp',
+                    'version_name': 'Vinyl',
+                    'upc': '1234567',
+                    },
+                ]
+            'tracks': [
+                {
+                    'track_number': 1,
+                    'track_artist': 'Stevie B.',
+                    'track_name': 'Babaloo',
+                    'isrc': 'QA123',
+                    },
+                }
 
 def test_can_create_df():
     df = make_df()

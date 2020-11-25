@@ -1,6 +1,7 @@
 from dummy import Catalogs, make_catalog_df, make_track_isrcs, Artists, make_versions, make_upc, make_version_df
 
 
+
 def test_pytest_working():
     assert True
 
@@ -34,7 +35,6 @@ def test_can_make_catalog_df():
     track_title_1 = df['track_title'][0]
     track_title_2 = df['track_title'][1]
     assert track_title_1 != track_title_2
-
 
 def test_can_make_track_isrcs():
     isrcs = make_track_isrcs('TR-001')
@@ -73,3 +73,6 @@ def test_can_make_version_numbers():
     catalog_number = 'TR-001'
     version_numbers = make_versions(catalog_number)
     assert len(version_numbers) > 0
+
+
+
