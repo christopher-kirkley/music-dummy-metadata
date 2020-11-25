@@ -15,7 +15,7 @@ def make_test_json():
                     'version_name': 'Vinyl',
                     'upc': '1234567',
                     },
-                ]
+                ],
             'tracks': [
                 {
                     'track_number': 1,
@@ -23,6 +23,7 @@ def make_test_json():
                     'track_name': 'Babaloo',
                     'isrc': 'QA123',
                     },
+                ]
                 }
 
 def test_can_create_df():
